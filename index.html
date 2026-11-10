@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Craft Anything · 万物可造</title>
+<meta name="description" content="Craft Anything —— 手作者的作品画廊。陶艺、木作、织物、纸艺、金工、数字手作。" />
+<meta name="theme-color" content="#faf7f2" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23b4552d'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23faf7f2' stroke-width='2.2'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="#top">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">Craft&nbsp;Anything</span>
+  </a>
+  <nav class="nav">
+    <a href="#gallery">画廊</a>
+    <a href="#about">关于</a>
+  </nav>
+  <button class="btn btn-primary" data-open-upload>
+    <span class="plus" aria-hidden="true">+</span> 上传作品
+  </button>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <p class="eyebrow">HANDMADE · ANYTHING</p>
+    <h1>把任何一个念头，<br /><em>做成可以拿在手上的东西。</em></h1>
+    <p class="lede">
+      这里是一个开放的手作画廊。泥、木、线、纸、金属，或者一行代码——
+      只要动手做出来了，就值得被看见。
+    </p>
+
+    <div class="hero-bar">
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
+        <input id="search" type="search" placeholder="搜作品、作者或标签…" autocomplete="off" />
+      </label>
+      <button class="btn btn-ghost" data-open-upload>上传我的作品</button>
+    </div>
+
+    <ul class="stats">
+      <li><strong id="statWorks">0</strong><span>件作品</span></li>
+      <li><strong id="statMakers">0</strong><span>位手作者</span></li>
+      <li><strong id="statLikes">0</strong><span>次喜欢</span></li>
+    </ul>
+  </section>
+
+  <section class="toolbar" id="gallery">
+    <div class="chips" id="chips" role="tablist" aria-label="分类筛选"></div>
+    <div class="tools">
+      <select id="sort" aria-label="排序">
+        <option value="new">最新发布</option>
+        <option value="hot">最多喜欢</option>
+      </select>
+      <button class="btn btn-mini" id="exportBtn" title="导出为 JSON 备份">导出</button>
+      <label class="btn btn-mini" title="从 JSON 备份导入">
+        导入
+        <input id="importInput" type="file" accept="application/json" hidden />
+      </label>
+    </div>
+  </section>
+
+  <section class="grid" id="grid" aria-live="polite"></section>
+
+  <div class="empty" id="empty" hidden>
+    <div class="empty-art" aria-hidden="true"></div>
+    <h2>这里还很空</h2>
+    <p>换个关键词试试，或者把第一件作品放进来。</p>
+    <button class="btn btn-primary" data-open-upload>上传作品</button>
+  </div>
+
+  <section class="about" id="about">
+    <h2>关于这个画廊</h2>
+    <div class="about-grid">
+      <p>
+        Craft Anything 相信「做出来」这件事本身就足够有意义。它不评判技法，
+        不问你有没有工作室，只关心你做的那件东西长什么样、为什么做它。
+      </p>
+      <p>
+        页面上的作品与喜欢都存在你自己的浏览器里（localStorage），不上传服务器。
+        换设备或清缓存前，用上方的「导出」存一份 JSON 备份即可。
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>Craft Anything · 万物可造</span>
+  <span class="dot">·</span>
+  <span>Made by hand, kept in your browser.</span>
+</footer>
+
+<!-- 详情 -->
+<div class="overlay" id="detailOverlay" hidden>
+  <div class="sheet detail-sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <button class="close" data-close="detailOverlay" aria-label="关闭">×</button>
+    <div class="detail-media"><img id="detailImg" alt="" /></div>
+    <div class="detail-body">
+      <p class="detail-cat" id="detailCat"></p>
+      <h2 id="detailTitle"></h2>
+      <p class="detail-author" id="detailAuthor"></p>
+      <p class="detail-desc" id="detailDesc"></p>
+      <dl class="detail-meta">
+        <dt>材料 / 工具</dt><dd id="detailMaterials"></dd>
+        <dt>创作时间</dt><dd id="detailDate"></dd>
+      </dl>
+      <div class="detail-tags" id="detailTags"></div>
+      <div class="detail-actions">
+        <button class="like like-lg" id="detailLike" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-9.2A3.9 3.9 0 0 1 12 8.4 3.9 3.9 0 0 1 19 10.8C19 15.6 12 20 12 20z" /></svg>
+          <span id="detailLikeCount">0</span>
+        </button>
+        <button class="btn btn-danger" id="deleteBtn" hidden>删除这件作品</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 上传 -->
+<div class="overlay" id="uploadOverlay" hidden>
+  <div class="sheet form-sheet" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
+    <button class="close" data-close="uploadOverlay" aria-label="关闭">×</button>
+    <h2 id="uploadTitle">上传一件作品</h2>
+    <p class="form-hint">图片会压缩后存在本机浏览器里，不会上传到任何服务器。</p>
+
+    <form id="uploadForm" novalidate>
+      <label class="drop" id="drop" for="fileInput">
+        <input id="fileInput" type="file" accept="image/*" hidden />
+        <img id="preview" alt="" hidden />
+        <span class="drop-copy">
+          <strong>点此选择图片</strong>
+          <small>或把图片拖进来（JPG / PNG / WebP）</small>
+        </span>
+      </label>
+
+      <div class="field-row">
+        <label class="field">
+          <span>作品名</span>
+          <input id="fTitle" type="text" maxlength="40" placeholder="例如：歪嘴陶罐 No.7" required />
+        </label>
+        <label class="field">
+          <span>作者</span>
+          <input id="fAuthor" type="text" maxlength="20" placeholder="你的名字" required />
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          <span>分类</span>
+          <select id="fCat"></select>
+        </label>
+        <label class="field">
+          <span>材料 / 工具</span>
+          <input id="fMaterials" type="text" maxlength="60" placeholder="粗陶、草木灰釉" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>标签（用逗号分隔）</span>
+        <input id="fTags" type="text" maxlength="60" placeholder="手捏, 拉坯, 极简" />
+      </label>
+
+      <label class="field">
+        <span>说点什么</span>
+        <textarea id="fDesc" rows="4" maxlength="300" placeholder="为什么做它？过程中最得意或最失败的一步是什么？"></textarea>
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" data-close="uploadOverlay">取消</button>
+        <button type="submit" class="btn btn-primary">放进画廊</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
